@@ -4,7 +4,7 @@ An interactive tool to highlight the impact of hidden or arbitrary researcher de
 ## Editing the Project
 
 *  R Shiny project with renv
-   *  `renv` provides project-local R dependency. All packages are isolated from existing R packages.
-   *  Will force you to download required packages regardless of if you have the locally installed.
+   *  `renv` provides project-local R dependency and enviroment management. All packages are isolated from existing R packages.
    *  https://cran.r-project.org/web/packages/renv/vignettes/renv.html
-   *  Improves reproduciblity
+   *  Improves reproduciblity because it tells others exactly what enviroment was used.
+   *  You know it's good cause Rohan recommends it!
