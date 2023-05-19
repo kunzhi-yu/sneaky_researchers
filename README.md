@@ -8,3 +8,7 @@ An interactive tool to highlight the impact of hidden or arbitrary researcher de
    *  Will force you to download required packages regardless of if you have the locally installed.
    *  https://cran.r-project.org/web/packages/renv/vignettes/renv.html
    *  Improves reproduciblity
+
+## Dataset
+
+* https://www.kaggle.com/datasets/uciml/adult-census-income?resource=download
