@@ -12,8 +12,8 @@ ui <- fluidPage(
 
     # Application title
     titlePanel("Sneaky Researchers: How Arbitary or Hidden Decisions can Effect Research Results"),
-    helpText("You are an intern at a consulting firm. Your boss asks you to conduct
-             some market research on gender and its effect on hours spent on the internet.
+    helpText("You are an intern at a consulting firm and your boss asks you to conduct
+             some market research. She thinks that those with smartphone spend more hours spent on the internet.
              After finding a data set from Statistics Canada, it's time for data cleaning
              and analysis. Let's see how your arbitrary choices will effect the 
              research outcome."),
@@ -25,7 +25,8 @@ ui <- fluidPage(
                          "How do you deal with Missing Values?",
                          choices = c("Drop any row with NA",
                                      "Drop rows where the outcome is NA",
-                                     "Keep all NAs and let R handle it")),
+                                     "Keep all NAs and let R handle it
+                                     (might result in error)")),
             tags$hr(),
             sliderInput("choice_sample_size",
                         "What sample size do you use?",
@@ -39,20 +40,21 @@ ui <- fluidPage(
                                "What other variables will you include in your model?",
                                choiceNames = c("Attending a school, college, CEGEP or university",
                                            "Employment Status",
-                                           "Use of Smartphone"),
+                                           "Gender"),
                                choiceValues = c("is_in_school",
                                                 "is_employed",
-                                                "use_smartphone"))
+                                                "gender"))
         ),
         
         # Show a plot of the generated distribution
         mainPanel(
            textOutput("result_show_text"),
            textOutput("sig_show_text"),
-           tags$hr
+           tags$hr(),
            plotOutput("choice_viz")
         )
-    )
+    ),
+    helpText("Created by Jessica Xu and Alex Yu under the supervision of Liza Bolton.")
 )
 
 # Define server logic required to draw a histogram
@@ -62,26 +64,28 @@ server <- function(input, output) {
     df <- read_csv("data/cius_2020_pumf_clean.csv")
     
     # All possible model specifications to permute over
-    base_mod <- "total_internet_time ~ gender"
+    base_mod <- "total_internet_time ~ use_smartphone"
     all_mods <- c(base_mod,
                   str_c(base_mod, " + is_in_school"),
                   str_c(base_mod, " + is_employed"),
-                  str_c(base_mod, " + use_smartphone"),
+                  str_c(base_mod, " + gender"),
                   str_c(base_mod, " + is_in_school + is_employed"),
-                  str_c(base_mod, " + is_in_school + use_smartphone"),
-                  str_c(base_mod, " + is_employed + use_smartphone"),
-                  str_c(base_mod, " + is_in_school + is_employed + use_smartphone")
+                  str_c(base_mod, " + is_in_school + gender"),
+                  str_c(base_mod, " + is_employed + gender"),
+                  str_c(base_mod, " + is_in_school + is_employed + gender")
     )
     all_sample_sizes <- c(100, 600, 1100, 1600, 2100, 2600, 3100, 3600)
     
     # Process the user's NA choice
     dropped_df <- reactive({
         if (identical(input$choice_drop_na, "Drop any row with NA")) {
-            df <- df %>% na.omit()
+            return(df %>% na.omit())
         } else if (identical(input$choice_drop_na, "Drop rows where the outcome is NA")) {
-            df <- df %>% drop_na(total_internet_time)
+            return(df %>% drop_na(total_internet_time))
+        } else {
+            return(df[1:3600,])
         }
-        return(df)
+        # return(result)
     })
     
     # Calculate the model based off the user's choice of NA drop
@@ -96,8 +100,8 @@ server <- function(input, output) {
                 model <- lm(formula,
                             data = sample_n(dropped_df(), all_sample_sizes[j])) # linear regression
                 res <- summary(model)$coefficients
-                coeffs <- c(coeffs, res["gendermale", 1])
-                pvals <- c(pvals, res["gendermale", 4])
+                coeffs <- c(coeffs, res["use_smartphoneTRUE", 1])
+                pvals <- c(pvals, res["use_smartphoneTRUE", 4])
                 models <- c(models, str_c(all_mods[i], all_sample_sizes[j], sep = ", "))
             }
         }
@@ -115,15 +119,19 @@ server <- function(input, output) {
         # NA if user didn't select that var, var name if they did select it
         var1 <- NA              #is_in_school
         var2 <- NA              #is_employed
-        var3 <- NA              #use_smartphone
+        var3 <- NA              #gender
+        print(input$choice_variables)
         if ("is_in_school" %in% input$choice_variables) {
             var1 <- "is_in_school"
-        } else if ("is_employed" %in% input$choice_variables) {
+        } 
+        if ("is_employed" %in% input$choice_variables) {
             var2 <- "is_employed"
-        } else if ("use_smartphone" %in% input$choice_variables) {
-            var3 <- "use_smartphone"
+        } 
+        if ("gender" %in% input$choice_variables) {
+            var3 <- "gender"
         }
         covars <- c(var1, var2, var3)
+        print(covars)
         
         # parse the model that the user selected
         if (sum(is.na(covars)) == 3) {
@@ -135,6 +143,7 @@ server <- function(input, output) {
                                paste(covars[!is.na(covars)], collapse = " + "),
                                ", ", input$choice_sample_size, sep = "")
         }
+        print(sel_model)
         
         # Grab the row which the user selected
         sel_model_row <- outcomes_df()[which(outcomes_df()$models == sel_model),]
@@ -176,11 +185,12 @@ server <- function(input, output) {
                                  guide = "none") + 
             theme(axis.ticks.x = element_blank(),
                   axis.text.x = element_blank(),
-                  legend.position = "bottom") + 
-            labs(title = "Does gender predict internet usage?",
-                 subtitle = "Average male internet usage time compared with females",
+                  legend.position = "bottom",
+                  plot.title = element_text(size = 22)) + 
+            labs(title = "Does Smartphone Ownership Predict Internet Usage?",
+                 subtitle = "Average smartphone user internet usage time compared with non-users",
                  x = "Different model specifications", 
-                 y = "Hours of internet usage") # +
+                 y = "Hours of internet usage")
         
     })
     
