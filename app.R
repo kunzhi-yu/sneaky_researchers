@@ -157,7 +157,7 @@ server <- function(input, output) {
     
     # Output result
     output$result_show_text <- renderText({str_c(
-        "Result: On average, the difference in internet usage time between males and females is ", 
+        "Result: On average, the difference in internet usage time between smartphone users and non-users is ", 
         results_vector()[1], 
         " hours. ")})
 
@@ -191,6 +191,7 @@ server <- function(input, output) {
                  subtitle = "Average smartphone user internet usage time compared with non-users",
                  x = "Different model specifications", 
                  y = "Hours of internet usage")
+        
         
     })
     
