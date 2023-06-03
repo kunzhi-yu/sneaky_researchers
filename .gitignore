@@ -30,6 +30,7 @@ vignettes/*.pdf
 
 # knitr and R markdown default cache directories
 *_cache/
+*.DS_Store
 /cache/
 
 # Temporary files created by R markdown
@@ -47,3 +48,7 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# The original data files that are too large to store
+cius_2020_pumf.csv
+cius2020_pumf.sas7bdat
