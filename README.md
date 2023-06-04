@@ -10,11 +10,10 @@ An interactive tool to highlight the impact of hidden or arbitrary researcher de
 ## Dataset
 
 *  Data on the adoption and use of digital technologies and the online behaviours of individuals 15 years of age and older living in the ten provinces of Canada conducted by Statistics Canada in 2020.
-*  The public use microdata file (PUMF) from the Canadian Internet Use Survey (CIUS)
-*  https://www150.statcan.gc.ca/n1/pub/56m0003x/56m0003x2020001-eng.htm
+*  The [public use microdata file (PUMF)](https://www150.statcan.gc.ca/n1/pub/56m0003x/56m0003x2020001-eng.htm) from the Canadian Internet Use Survey (CIUS).
 *  The data is in SAS format after you download it. To convert prepare the data, run [this file](data_cleaning.R). 
    * You do not need to clean the data for the app to run, only if you wish to edit the app  or data.
-*  The data dictionary is [here](data/CIUS 2020_PUMF_CdBk.pdf)
+*  The data dictionary is [data/CIUS 2020_PUMF_CdBk.pdf](https://github.com/kunzhi-yu/sneaky_researchers/blob/main/data/CIUS%202020_PUMF_CdBk.pdf). You can find more details on the Statistics Canada link above.
 
 
 ## Editing the Project
@@ -24,4 +23,3 @@ An interactive tool to highlight the impact of hidden or arbitrary researcher de
    *  https://cran.r-project.org/web/packages/renv/vignettes/renv.html
    *  Improves reproducibility because it tells others exactly what environment was used.
    *  You know it's good cause Rohan recommends it!
-
