@@ -6,16 +6,17 @@ library(dplyr)
 library(readr)
 library(tidyr)
 library(ggplot2)
+library(stringr)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Sneaky Researchers: How Arbitary or Hidden Decisions can Effect Research Results"),
-    helpText("You are an intern at a consulting firm and your boss asks you to conduct
-             some market research. She thinks that those with smartphone spend more hours spent on the internet.
+    titlePanel("Sneaky Researchers: How Arbitary and Hidden Decisions can Affect Research Results"),
+    p("You are an intern at a consulting firm and your boss asks you to conduct
+             some market research. She thinks that those with smartphones spend more hours on the internet.
              After finding a data set from Statistics Canada, it's time for data cleaning
-             and analysis. Let's see how your arbitrary choices will effect the 
+             and analysis. Let's see how your arbitrary choices will affect the 
              research outcome."),
 
     # Sidebar with a slider input for number of bins 
@@ -25,8 +26,7 @@ ui <- fluidPage(
                          "How do you deal with Missing Values?",
                          choices = c("Drop any row with NA",
                                      "Drop rows where the outcome is NA",
-                                     "Keep all NAs and let R handle it
-                                     (might result in error)")),
+                                     "Keep all NAs and let R handle it")),
             tags$hr(),
             sliderInput("choice_sample_size",
                         "What sample size do you use?",
@@ -35,7 +35,7 @@ ui <- fluidPage(
                         value = 1100,
                         step = 500),
             tags$hr(),
-            helpText("You choose to model the relationship with a linear model"),
+            p("You choose to model the relationship with a linear model"),
             checkboxGroupInput("choice_variables",
                                "What other variables will you include in your model?",
                                choiceNames = c("Attending a school, college, CEGEP or university",
@@ -43,18 +43,25 @@ ui <- fluidPage(
                                            "Gender"),
                                choiceValues = c("is_in_school",
                                                 "is_employed",
-                                                "gender"))
+                                                "gender")),
+            
         ),
         
         # Show a plot of the generated distribution
         mainPanel(
-           textOutput("result_show_text"),
-           textOutput("sig_show_text"),
-           tags$hr(),
-           plotOutput("choice_viz")
+            h3("Possible differences based of Model Specifications"),
+            p("Depending on your choice, the estimated difference between smartphone users and non-users varies!"),
+            plotOutput("choice_viz"),
+            h3("Result:"),
+            textOutput("result_show_text"),
+            textOutput("sig_show_text")
         )
     ),
-    helpText("Created by Jessica Xu and Alex Yu under the supervision of Liza Bolton.")
+    tags$br(),
+    tags$br(),
+    fluidRow(column(12, 
+        "Created by Jessica Xu and Alex Yu under the supervision of Liza Bolton."), align = "right")
+    
 )
 
 # Define server logic required to draw a histogram
@@ -90,6 +97,7 @@ server <- function(input, output) {
     
     # Calculate the model based off the user's choice of NA drop
     outcomes_df <- reactive({
+        set.seed(520)
         coeffs <- c() # coefficients for the sex var
         pvals <- c() # p-values
         models <- c() # model specifications+sample size
@@ -131,7 +139,6 @@ server <- function(input, output) {
             var3 <- "gender"
         }
         covars <- c(var1, var2, var3)
-        print(covars)
         
         # parse the model that the user selected
         if (sum(is.na(covars)) == 3) {
@@ -143,7 +150,6 @@ server <- function(input, output) {
                                paste(covars[!is.na(covars)], collapse = " + "),
                                ", ", input$choice_sample_size, sep = "")
         }
-        print(sel_model)
         
         # Grab the row which the user selected
         sel_model_row <- outcomes_df()[which(outcomes_df()$models == sel_model),]
@@ -157,7 +163,7 @@ server <- function(input, output) {
     
     # Output result
     output$result_show_text <- renderText({str_c(
-        "Result: On average, the difference in internet usage time between smartphone users and non-users is ", 
+        "On average, the difference in internet usage time between smartphone users and non-users over a typical week is ", 
         results_vector()[1], 
         " hours. ")})
 
@@ -185,18 +191,10 @@ server <- function(input, output) {
                                  guide = "none") + 
             theme(axis.ticks.x = element_blank(),
                   axis.text.x = element_blank(),
-                  legend.position = "bottom",
-                  plot.title = element_text(size = 22)) + 
-            labs(title = "Does Smartphone Ownership Predict Internet Usage?",
-                 subtitle = "Average smartphone user internet usage time compared with non-users",
-                 x = "Different model specifications", 
-                 y = "Hours of internet usage")
-        
-        
+                  legend.position = "bottom") + 
+            labs(x = "Possible Model Specifications", 
+                 y = "Difference in Internt Usage")
     })
-    
-    #==========================================================================#
-    
     
 }
 
