@@ -2,10 +2,12 @@
 An interactive tool to highlight the impact of hidden or arbitrary researcher decisions on study results
 
 ## Launching the App
-*  Clone the repo
-*  Open app.R
-   *  You will be prompted to install packages
-*  Click `Run App`
+
+Launch R Console and run the following two lines
+```
+library(shiny)
+shiny::runGitHub("sneaky_researchers","kunzhi-yu")
+```
 
 ## Dataset
 
@@ -20,6 +22,10 @@ An interactive tool to highlight the impact of hidden or arbitrary researcher de
 
 ## Editing the Project
 
+*  Clone the repo
+*  Open app.R
+   *  You will be prompted to install packages
+*  Click `Run App`
 *  R Shiny project with renv
    *  `renv` provides project-local R dependency and environment management. All packages are isolated from existing R packages.
    *  https://cran.r-project.org/web/packages/renv/vignettes/renv.html
