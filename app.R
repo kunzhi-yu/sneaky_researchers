@@ -68,7 +68,7 @@ ui <- fluidPage(
 server <- function(input, output) {
     # Seed and data
     set.seed(520)
-    df <- read_csv("data/cius_2020_pumf_clean.csv")
+    df <- read_csv("data/cius_2020_pumf_clean.csv", show_col_types = FALSE)
     
     # All possible model specifications to permute over
     base_mod <- "total_internet_time ~ use_smartphone"
