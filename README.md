@@ -3,7 +3,9 @@ An interactive tool to highlight the impact of hidden or arbitrary researcher de
 
 ## Launching the App
 
-Launch R Console and run the following two lines
+Hosted on shinyapps.io: https://kunzhi-yu.shinyapps.io/sneaky_researchers/
+
+You can also launch on your own device. Open R Console and run the following lines
 ```
 library(shiny)
 shiny::runGitHub("sneaky_researchers","kunzhi-yu")
